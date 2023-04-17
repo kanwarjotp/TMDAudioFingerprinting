@@ -34,7 +34,7 @@ class Fingerprint:
         print("wav file generated")
         self._generate_spectrum(plot=plot)
         print("spectrum generated")
-        self.find_peaks()
+        self._find_peaks()
         print("peaks generated")
 
         if plot:  # plot if requested
@@ -67,8 +67,8 @@ class Fingerprint:
         spectrum, freqs, times = specgram(
             x=song_left_channel,
             Fs=self._wav_info['sample_rate'],
-            NFFT=NFFT_VALUE,
-            noverlap=OVERLAP_VALUE
+            NFFT=Fingerprint.NFFT_VALUE,
+            noverlap=Fingerprint.OVERLAP_VALUE
         )
 
         spectrum[spectrum == 0] = 1e-6  # changing 0 values to 1e-6
@@ -94,14 +94,15 @@ class Fingerprint:
     def _find_peaks(self):
         self._coordinates = peak_local_max(
             self._spectrum,
-            min_distance=MIN_DISTANCE_PEAKS,
-            threshold_abs=THRESHOLD_ABS_PEAKS
+            min_distance=Fingerprint.MIN_DISTANCE_PEAKS,
+            threshold_abs=Fingerprint.THRESHOLD_ABS_PEAKS
         )
 
     def _generate_hash(self):
+        pass
 
 
 fingerprint_1 = Fingerprint("F:\AF\wavs\Jonas Brothers.wav", "JB")
 # testing class structure
-# fingerprint = fingerprint_1.get_fingerprint(plot=True)
+fingerprint = fingerprint_1.get_fingerprint(plot=True)
 # print(fingerprint_1._wav_info)
