@@ -1,12 +1,37 @@
+from scipy.io import wavfile
+
+
 class Fingerprint:
     def __init__(self, song):
-        self.__song = song
-        self.__wav_file = None
-        self.__spectrum = None
-        self.__figure = None
-        self.__coordinates = None
-        self.__hash = None
+        """
+        Params:
+        song, a string for the address of the file
+        exposes a get_fingerprint method which returns a hash value, representing the fingerprint
+        """
+        self._song = song
+        self._wav_info = None
+        self._spectrum = None
+        self._figure = None
+        self._coordinates = None
+        self._hash = None
 
     def get_fingerprint(self):
-        return self.__hash
+        self.convert_to_wav()
+        return self._wav_info
+        return self._hash
 
+    def convert_to_wav(self):
+        sample_rate, song_data = wavfile.read(self._song)
+
+        data_dict = {
+            'sample_rate': sample_rate,
+            'song_data': song_data
+        }
+
+        self._wav_info = data_dict
+
+
+fingerprint_1 = Fingerprint("F:\AF\wavs\Jonas Brothers.wav")
+# testing class structure
+# fingerprint_1.get_fingerprint()
+# print(fingerprint_1._wav_info)
