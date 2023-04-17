@@ -4,13 +4,13 @@ from scipy.io import wavfile
 from matplotlib.mlab import specgram
 from skimage.feature import peak_local_max
 
-NFFT_VALUE = 4096
-OVERLAP_VALUE = 2048
-MIN_DISTANCE_PEAKS = 20
-THRESHOLD_ABS_PEAKS = 20
-
-
 class Fingerprint:
+
+    NFFT_VALUE = 4096
+    OVERLAP_VALUE = 2048
+    MIN_DISTANCE_PEAKS = 20
+    THRESHOLD_ABS_PEAKS = 20
+
     def __init__(self, song, title):
         """
 
@@ -91,12 +91,14 @@ class Fingerprint:
 
         self._spectrum = Z
 
-    def find_peaks(self):
+    def _find_peaks(self):
         self._coordinates = peak_local_max(
             self._spectrum,
             min_distance=MIN_DISTANCE_PEAKS,
             threshold_abs=THRESHOLD_ABS_PEAKS
         )
+
+    def _generate_hash(self):
 
 
 fingerprint_1 = Fingerprint("F:\AF\wavs\Jonas Brothers.wav", "JB")
