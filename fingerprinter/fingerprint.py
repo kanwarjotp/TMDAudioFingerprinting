@@ -13,9 +13,9 @@ THRESHOLD_ABS_PEAKS = 20
 class Fingerprint:
     def __init__(self, song, title):
         """
-        Params:
-        song, a string for the address of the file
-        exposes a get_fingerprint method which returns a hash value, representing the fingerprint
+
+        :param song: a string for the address of the file
+        :return Fingerprint Object: exposes a get_fingerprint method which returns a hash value, representing the fingerprint
         """
         self._title = title
         self._song = song
@@ -25,6 +25,11 @@ class Fingerprint:
         self._hash = None
 
     def get_fingerprint(self, plot=False):
+        """
+
+        :param plot: set True if th plots are desired, False otherwise
+        :return: hash value representing the fingerprint
+        """
         self._convert_to_wav()
         print("wav file generated")
         self._generate_spectrum(plot=plot)
