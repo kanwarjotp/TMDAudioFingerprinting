@@ -1,3 +1,5 @@
+import hashlib
+
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.io import wavfile
@@ -11,14 +13,16 @@ class Fingerprint:
     MIN_DISTANCE_PEAKS = 15
     MIN_INTENSITY_OF_PEAKS = 20
     TIME_INTERVAL_PRECISION = 3  # 0 = second, 3 = millisecond
+    MAX_SEGMENT_TO_FINGERPRINT = 15
+    MIN_TIME_DIFF = 0
 
-    def __init__(self, song, title):
+    def __init__(self, song, song_id):
         """
 
         :param song: a string for the address of the file
         :return Fingerprint Object: exposes a get_fingerprint method which returns a hash value, representing the fingerprint
         """
-        self._title = title
+        self._song_id = song_id
         self._song = song
         self._wav_info = None
         self._spectrum = None
@@ -44,9 +48,9 @@ class Fingerprint:
             plt.imshow(self._spectrum['spectrum'], cmap='viridis')
             plt.scatter(self._coordinates[:, 1], self._coordinates[:, 0])
             ax = plt.gca()
-            plt.xlabel('Time bin[s]')
-            plt.ylabel('Frequency[Hz]')
-            plt.title(self._title, fontsize=18)
+            plt.xlabel('Spectrogram Width Units')
+            plt.ylabel('Spectrogram Height Units')
+            plt.title(self._song_id, fontsize=18)
             plt.axis('auto')
             ax.set_xlim([0, len(self._spectrum['times'])])
             ax.set_ylim([len(self._spectrum['freqs']), 0])
@@ -54,6 +58,8 @@ class Fingerprint:
             ax.yaxis.set_ticklabels([])
             plt.show()
 
+        self._generate_hash()
+        print("hash generated")
         return self._hash
 
     def _convert_to_wav(self):
@@ -133,7 +139,30 @@ class Fingerprint:
         self._peaks = peaks
 
     def _generate_hash(self):
-        pass
+
+        hashed = set()  # preventing redundant hashes
+
+        hashes = []
+        peaks = self._peaks
+
+        for i in range(len(peaks)):
+            for j in range(Fingerprint.MAX_SEGMENT_TO_FINGERPRINT):
+                if i+j < len(peaks) and not (i, i+j) in hashed:
+                    f1 = peaks[i][1]
+                    f2 = peaks[i + j][1]
+                    t1 = peaks[i][0]
+                    t2 = peaks[i + j][0]
+                    t_diff = t2 - t1
+
+                    if t_diff >= Fingerprint.MIN_TIME_DIFF:
+                        # hash this value
+                        h = hashlib.sha1(("{0}{1}{2}".format(str(f1), str(f2), str(t_diff))).encode('utf-8'))
+                        # truncating the hash to conserve storage
+                        hashes.append((h.hexdigest()[0:20], (self._song_id, t1)))
+
+                    hashed.add((i, i+j))
+
+        self._hash = hashes
 
 
 fingerprint_1 = Fingerprint("F:\AF\wavs\Jonas Brothers.wav", "JB")
@@ -141,3 +170,4 @@ fingerprint_1 = Fingerprint("F:\AF\wavs\Jonas Brothers.wav", "JB")
 fingerprint = fingerprint_1.get_fingerprint()
 # print(fingerprint_1._wav_info)
 # print(fingerprint_1._peaks)
+# print(fingerprint, len(fingerprint))
