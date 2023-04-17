@@ -4,12 +4,13 @@ from scipy.io import wavfile
 from matplotlib.mlab import specgram
 from skimage.feature import peak_local_max
 
-class Fingerprint:
 
+class Fingerprint:
     NFFT_VALUE = 4096
     OVERLAP_VALUE = 2048
-    MIN_DISTANCE_PEAKS = 20
-    THRESHOLD_ABS_PEAKS = 20
+    MIN_DISTANCE_PEAKS = 15
+    MIN_INTENSITY_OF_PEAKS = 20
+    TIME_INTERVAL_PRECISION = 3  # 0 = second, 3 = millisecond
 
     def __init__(self, song, title):
         """
@@ -22,6 +23,7 @@ class Fingerprint:
         self._wav_info = None
         self._spectrum = None
         self._coordinates = None
+        self._peaks = None
         self._hash = None
 
     def get_fingerprint(self, plot=False):
@@ -99,11 +101,36 @@ class Fingerprint:
         }
 
     def _find_peaks(self):
+        # finding peaks using scipy
         self._coordinates = peak_local_max(
             self._spectrum['spectrum'],
             min_distance=Fingerprint.MIN_DISTANCE_PEAKS,
-            threshold_abs=Fingerprint.THRESHOLD_ABS_PEAKS
+            threshold_abs=Fingerprint.MIN_INTENSITY_OF_PEAKS
         )
+
+        peaks = []  # list to store peaks for the songs
+
+        ht_of_spec = self._spectrum['spectrum'].shape[0]
+        wdt_of_spec = self._spectrum['spectrum'].shape[1]
+
+        length_of_song = round(np.amax(self._spectrum['times']), Fingerprint.TIME_INTERVAL_PRECISION)
+        max_freq_of_song = self._spectrum['freqs'][-1]
+
+        single_unit_time = round((length_of_song / wdt_of_spec), Fingerprint.TIME_INTERVAL_PRECISION)
+        single_unit_freq = round((max_freq_of_song / ht_of_spec))
+
+        for i in self._coordinates:
+            # converting x coordinates to time in seconds
+            time_coordinate = round(single_unit_time * i[1], Fingerprint.TIME_INTERVAL_PRECISION)
+
+            # converting y coordinates to frequency in Hz
+            freq_coordinates = round(single_unit_freq * (ht_of_spec - i[0]))
+
+            # storing the pair in peaks
+            peaks.append((time_coordinate, freq_coordinates))
+            pass
+
+        self._peaks = peaks
 
     def _generate_hash(self):
         pass
@@ -111,5 +138,6 @@ class Fingerprint:
 
 fingerprint_1 = Fingerprint("F:\AF\wavs\Jonas Brothers.wav", "JB")
 # testing class structure
-fingerprint = fingerprint_1.get_fingerprint(plot=True)
+fingerprint = fingerprint_1.get_fingerprint()
 # print(fingerprint_1._wav_info)
+# print(fingerprint_1._peaks)
