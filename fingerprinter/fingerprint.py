@@ -79,17 +79,17 @@ class Fingerprint:
         Z = np.flipud(Z)
 
         if plot:
-            plt.figure(figsize=(20, 8), facecolor='white')
+            fig1 = plt.figure(figsize=(20, 8), facecolor='white')
             extent = 0, np.amax(times), freqs[0], freqs[-1]
+            Z = 10.0 * np.log10(spectrum)  # apply log transform since specgram() returns linear array
             Z = np.flipud(Z)
             plt.imshow(Z, cmap='viridis', extent=extent)
             plt.xlabel('Time bin')
             plt.ylabel('Frequency [Hz]')
-            plt.title(self._title + ", close to continue")
             plt.axis('auto')
             ax = plt.gca()
-            ax.set_xlim([extent[0], extent[1]])
-            ax.set_ylim([extent[2], extent[3]])
+            ax.set_xlim([0, extent[1]])
+            ax.set_ylim([freqs[0], freqs[-1]])
             plt.show()
 
         self._spectrum = Z
