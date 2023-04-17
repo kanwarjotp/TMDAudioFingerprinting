@@ -92,11 +92,15 @@ class Fingerprint:
             ax.set_ylim([freqs[0], freqs[-1]])
             plt.show()
 
-        self._spectrum = Z
+        self._spectrum = {
+            'spectrum': Z,
+            'times': times,
+            'freqs': freqs
+        }
 
     def _find_peaks(self):
         self._coordinates = peak_local_max(
-            self._spectrum,
+            self._spectrum['spectrum'],
             min_distance=Fingerprint.MIN_DISTANCE_PEAKS,
             threshold_abs=Fingerprint.THRESHOLD_ABS_PEAKS
         )
