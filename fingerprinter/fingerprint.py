@@ -1,5 +1,4 @@
 import hashlib
-
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.io import wavfile
@@ -167,7 +166,7 @@ class Fingerprint:
 
 fingerprint_1 = Fingerprint("F:\AF\wavs\Jonas Brothers.wav", "JB")
 # testing class structure
-fingerprint = fingerprint_1.get_fingerprint()
+fingerprint = fingerprint_1.get_fingerprint(True)
 # print(fingerprint_1._wav_info)
 # print(fingerprint_1._peaks)
-# print(fingerprint, len(fingerprint))
+print(fingerprint, len(fingerprint))
