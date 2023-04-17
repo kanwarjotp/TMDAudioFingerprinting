@@ -38,15 +38,18 @@ class Fingerprint:
         print("peaks generated")
 
         if plot:  # plot if requested
-            temp_fig = plt.figure(figsize=(20, 8), facecolor="white")
-            plt.title(self._title)
-            plt.imshow(self._spectrum, cmap='viridis')
+            fig = plt.figure(figsize=(20, 8), facecolor='white')
+            plt.imshow(self._spectrum['spectrum'], cmap='viridis')
             plt.scatter(self._coordinates[:, 1], self._coordinates[:, 0])
             ax = plt.gca()
             plt.xlabel('Time bin[s]')
             plt.ylabel('Frequency[Hz]')
-            plt.title("Peaks in " + self._title, fontsize=18)
+            plt.title(self._title, fontsize=18)
             plt.axis('auto')
+            ax.set_xlim([0, len(self._spectrum['times'])])
+            ax.set_ylim([len(self._spectrum['freqs']), 0])
+            ax.xaxis.set_ticklabels([])
+            ax.yaxis.set_ticklabels([])
             plt.show()
 
         return self._hash
