@@ -6,6 +6,7 @@ from matplotlib.mlab import specgram
 NFFT_VALUE = 4096
 OVERLAP_VALUE = 2048
 
+
 class Fingerprint:
     def __init__(self, song, title):
         """
@@ -69,7 +70,6 @@ class Fingerprint:
         ax.set_ylim([extent[2], extent[3]])
 
         self._figure = fig
-
 
 
 fingerprint_1 = Fingerprint("F:\AF\wavs\Jonas Brothers.wav", "JB")
