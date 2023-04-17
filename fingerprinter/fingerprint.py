@@ -16,11 +16,10 @@ class Fingerprint:
         self._hash = None
 
     def get_fingerprint(self):
-        self.convert_to_wav()
-        return self._wav_info
+        self._convert_to_wav()
         return self._hash
 
-    def convert_to_wav(self):
+    def _convert_to_wav(self):
         sample_rate, song_data = wavfile.read(self._song)
 
         data_dict = {
@@ -31,7 +30,8 @@ class Fingerprint:
         self._wav_info = data_dict
 
 
+
 fingerprint_1 = Fingerprint("F:\AF\wavs\Jonas Brothers.wav")
 # testing class structure
-# fingerprint_1.get_fingerprint()
+# fingerprint = fingerprint_1.get_fingerprint()
 # print(fingerprint_1._wav_info)
