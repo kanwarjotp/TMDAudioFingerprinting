@@ -2,6 +2,7 @@ import hashlib
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.io import wavfile
+import matplotlib.mlab as mlab
 from matplotlib.mlab import specgram
 from skimage.feature import peak_local_max
 
@@ -86,7 +87,8 @@ class Fingerprint:
             x=song_left_channel,
             Fs=self._wav_info['sample_rate'],
             NFFT=Fingerprint.NFFT_VALUE,
-            noverlap=Fingerprint.OVERLAP_VALUE
+            noverlap=Fingerprint.OVERLAP_VALUE,
+            window=mlab.window_hanning # hanning to make the signal peridic
         )
 
         spectrum[spectrum == 0] = 1e-6  # changing 0 values to 1e-6
@@ -170,3 +172,7 @@ class Fingerprint:
                     hashed.add((i, i + j))
 
         self._hash = hashes
+
+
+f = Fingerprint("F:\AF\wavs\Jonas Brothers.wav", "1")
+f.get_fingerprint(True)
