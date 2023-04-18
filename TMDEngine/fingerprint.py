@@ -10,10 +10,10 @@ class Fingerprint:
     NFFT_VALUE = 4096
     OVERLAP_VALUE = 2048
     MIN_DISTANCE_PEAKS = 15
-    MIN_INTENSITY_OF_PEAKS = 20
+    MIN_INTENSITY_OF_PEAKS = 20 # the more this value, less the noise errors
     TIME_INTERVAL_PRECISION = 3  # 0 = second, 3 = millisecond
     MAX_SEGMENT_TO_FINGERPRINT = 15
-    MIN_TIME_DIFF = 0
+    MIN_TIME_DIFF = 0  # min time diff between peak frequencies
 
     def __init__(self, song, song_id):
         """
@@ -91,7 +91,7 @@ class Fingerprint:
 
         spectrum[spectrum == 0] = 1e-6  # changing 0 values to 1e-6
         Z = 10.0 * np.log10(spectrum)  # apply log transform since specgram() returns linear array
-        Z = np.flipud(Z)
+        Z = np.flipud(Z)  # inverting y-axis of spectrum
 
         if plot:
             plt.figure(figsize=(20, 8), facecolor='white')
