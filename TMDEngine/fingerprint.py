@@ -10,7 +10,7 @@ class Fingerprint:
     NFFT_VALUE = 4096
     OVERLAP_VALUE = 2048
     MIN_DISTANCE_PEAKS = 15
-    MIN_INTENSITY_OF_PEAKS = 20 # the more this value, less the noise errors
+    MIN_INTENSITY_OF_PEAKS = 20  # the more this value, less the noise errors
     TIME_INTERVAL_PRECISION = 3  # 0 = second, 3 = millisecond
     MAX_SEGMENT_TO_FINGERPRINT = 15
     MIN_TIME_DIFF = 0  # min time diff between peak frequencies
@@ -154,7 +154,7 @@ class Fingerprint:
 
         for i in range(len(peaks)):
             for j in range(Fingerprint.MAX_SEGMENT_TO_FINGERPRINT):
-                if i+j < len(peaks) and not (i, i+j) in hashed:
+                if i + j < len(peaks) and not (i, i + j) in hashed:
                     f1 = peaks[i][1]
                     f2 = peaks[i + j][1]
                     t1 = peaks[i][0]
@@ -167,6 +167,6 @@ class Fingerprint:
                         # truncating the hash to conserve storage
                         hashes.append((h.hexdigest()[0:20], (self._song_id, t1)))
 
-                    hashed.add((i, i+j))
+                    hashed.add((i, i + j))
 
         self._hash = hashes
