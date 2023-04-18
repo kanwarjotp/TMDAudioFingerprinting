@@ -170,11 +170,3 @@ class Fingerprint:
                     hashed.add((i, i+j))
 
         self._hash = hashes
-
-
-fingerprint_1 = Fingerprint("F:\AF\wavs\Jonas Brothers.wav", "JB")
-# testing class structure
-fingerprint = fingerprint_1.get_fingerprint(True)
-# print(fingerprint_1._wav_info)
-# print(fingerprint_1._peaks)
-# print(fingerprint, len(fingerprint))
