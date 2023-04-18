@@ -23,8 +23,15 @@ class Fingerprint:
         """
         self._song_id = song_id
         self._song = song
-        self._wav_info = None
-        self._spectrum = None
+        self._wav_info = {
+            'sample_rate': None,
+            'song_data': None
+        }
+        self._spectrum = {
+            'spectrum': None,
+            'times': None,
+            'freqs': None
+        }
         self._coordinates = None
         self._peaks = None
         self._hash = None
@@ -166,7 +173,7 @@ class Fingerprint:
 
 fingerprint_1 = Fingerprint("F:\AF\wavs\Jonas Brothers.wav", "JB")
 # testing class structure
-fingerprint = fingerprint_1.get_fingerprint(True)
+fingerprint = fingerprint_1.get_fingerprint()
 # print(fingerprint_1._wav_info)
 # print(fingerprint_1._peaks)
-print(fingerprint, len(fingerprint))
+# print(fingerprint, len(fingerprint))
