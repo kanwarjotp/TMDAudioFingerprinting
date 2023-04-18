@@ -19,7 +19,8 @@ class Fingerprint:
         """
 
         :param song: a string for the address of the file
-        :return Fingerprint Object: exposes a get_fingerprint method which returns a hash value, representing the fingerprint
+        :return Fingerprint Object: exposes a get_fingerprint method which returns a hash value,
+         representing the fingerprint
         """
         self._song_id = song_id
         self._song = song
@@ -50,7 +51,7 @@ class Fingerprint:
         print("peaks generated")
 
         if plot:  # plot if requested
-            fig = plt.figure(figsize=(20, 8), facecolor='white')
+            plt.figure(figsize=(20, 8), facecolor='white')
             plt.imshow(self._spectrum['spectrum'], cmap='viridis')
             plt.scatter(self._coordinates[:, 1], self._coordinates[:, 0])
             ax = plt.gca()
@@ -93,7 +94,7 @@ class Fingerprint:
         Z = np.flipud(Z)
 
         if plot:
-            fig1 = plt.figure(figsize=(20, 8), facecolor='white')
+            plt.figure(figsize=(20, 8), facecolor='white')
             extent = 0, np.amax(times), freqs[0], freqs[-1]
             Z = 10.0 * np.log10(spectrum)  # apply log transform since specgram() returns linear array
             Z = np.flipud(Z)
@@ -173,7 +174,7 @@ class Fingerprint:
 
 fingerprint_1 = Fingerprint("F:\AF\wavs\Jonas Brothers.wav", "JB")
 # testing class structure
-fingerprint = fingerprint_1.get_fingerprint()
+fingerprint = fingerprint_1.get_fingerprint(True)
 # print(fingerprint_1._wav_info)
 # print(fingerprint_1._peaks)
 # print(fingerprint, len(fingerprint))
