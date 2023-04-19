@@ -10,19 +10,19 @@ from skimage.feature import peak_local_max
 class Fingerprint:
     NFFT_VALUE = 4096
     OVERLAP_VALUE = 2048
-    MIN_DISTANCE_PEAKS = 15
-    MIN_INTENSITY_OF_PEAKS = 20  # the more this value, less the noise errors
+    MIN_DISTANCE_PEAKS = 15 # decreasing minimum distance, increases the number of peaks found
+    MIN_INTENSITY_OF_PEAKS = 25  # the more this value, less the noise errors
     TIME_INTERVAL_PRECISION = 3  # 0 = second, 3 = millisecond
     MAX_SEGMENT_TO_FINGERPRINT = 15 # these number of peaks will be matched with a single peak
     MIN_TIME_DIFF = 0  # min time diff between peak frequencies
 
-    def __init__(self, song, song_id):
+    def __init__(self, song, song_id=None):
         """
 
         :param:
         song:  String representing the local address of the file\n
         song_id: A Unique Value, identifying the songs in the database \n\n
-        :return: Fingerprint Object: exposes a get_fingerprint method which returns a hash value,
+        :return: Fingerprint Object: exposes the get_fingerprint() method which returns a hash value,
          representing the fingerprint
         """
         self._song_id = song_id
@@ -40,11 +40,11 @@ class Fingerprint:
         plot: Boolean, set True if the plots of spectrograms and peaks are desired, defaults to False\n
         verbose: Boolean, set True if detailed decriptions are desired, defaults to False\n\n
 
-        :return: list containing hash values, representing the fingerprint for each channel
+        :return: list containing hash values, representing the fingerprint for the song
         """
         self._convert_to_wav()
         if verbose: print("wav file generated")
-        hashes_per_channel = []
+        hashes_total = []
         num_hashes_gen = 0
         channels = self._wav_info['song_data'].shape[1]
         for channel in range(channels): # iterating over the functions for each channel
@@ -58,10 +58,10 @@ class Fingerprint:
             self._generate_hash()
             if verbose: print("hash generated in channel {0}: {1}".format(channel, len(self._hashes)))
             num_hashes_gen += len(self._hashes)
-            hashes_per_channel.append(self._hashes)
+            hashes_total += self._hashes
 
         if verbose: print("Total Hashes across {0} channels: {1}".format(channels, num_hashes_gen))
-        return hashes_per_channel
+        return hashes_total
 
     def _convert_to_wav(self):
         sample_rate, song_data = wavfile.read(self._song)
@@ -178,6 +178,5 @@ class Fingerprint:
         plt.show()
 
 
-f = Fingerprint("F:\AF\wavs\Jonas Brothers.wav", "1")
-a = f.get_fingerprint()
-
+f = Fingerprint("F:\AF\wavs\Jonas Brothers.wav", "JB")
+a = f.get_fingerprint(0 ,1)
