@@ -31,24 +31,35 @@ class Fingerprint:
         self._peaks = []
         self._hashes = []
 
-    def get_fingerprint(self, plot=False):
+    def get_fingerprint(self, plot=False, verbose=False):
         """
 
-        :param plot: set True if th plots are desired, False otherwise
-        :return: hash value representing the fingerprint
+        :param
+        plot: set True if the plots of spectrograms and peaks are desired, defaults to False
+        verbose: set True if detailed decriptions are desired, defaults to False
+
+        :return: list containing hash values, representing the fingerprint for each channel
         """
         self._convert_to_wav()
-        print("wav file generated")
-        self._generate_spectrum(plot=plot)
-        print("spectrum generated")
-        self._find_peaks()
-        print("peaks generated: ", len(self._peaks))
+        if verbose: print("wav file generated")
+        hashes_per_channel = []
+        num_hashes_gen = 0
+        channels = self._wav_info['song_data'].shape[1]
+        for channel in range(channels): # iterating over the functions for each channel
+            self._generate_spectrum(plot=plot, channel=channel)
+            if verbose: print("spectrum generated for channel ", channel)
+            self._find_peaks()
+            if verbose: print("peaks generated in channel {0}: {1}".format(channel, len(self._peaks)))
 
-        if plot: self._plot_spectrum() # plot if requested
+            if plot: self._plot_spectrum() # plot if requested
 
-        self._generate_hash()
-        print("hash generated: ", len(self._hashes))
-        return self._hashes
+            self._generate_hash()
+            if verbose: print("hash generated in channel {0}: {1}".format(channel, len(self._hashes)))
+            num_hashes_gen += len(self._hashes)
+            hashes_per_channel.append(self._hashes)
+
+        if verbose: print("Total Hashes across {0} channels: {1}".format(channels, num_hashes_gen))
+        return hashes_per_channel
 
     def _convert_to_wav(self):
         sample_rate, song_data = wavfile.read(self._song)
@@ -60,10 +71,8 @@ class Fingerprint:
 
         self._wav_info = data_dict
 
-    def _generate_spectrum(self, plot):
-        song_left_channel = self._wav_info['song_data'][:, 0]
-        # TODO: create spectrum for other channles, or just save the number of chjannles
-        #  and iterate over them here and create a pectru list that then further has pectrum dicts
+    def _generate_spectrum(self, plot, channel):
+        song_left_channel = self._wav_info['song_data'][:, channel]
         # TODO: store the fingerprint with the offsets and song_id in the sql;ite3 database
 
         spectrum, freq, times = specgram(
@@ -168,4 +177,5 @@ class Fingerprint:
 
 
 f = Fingerprint("F:\AF\wavs\Jonas Brothers.wav", "1")
-f.get_fingerprint()
+a = f.get_fingerprint()
+
