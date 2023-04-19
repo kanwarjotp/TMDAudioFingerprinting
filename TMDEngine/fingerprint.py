@@ -25,18 +25,11 @@ class Fingerprint:
         """
         self._song_id = song_id
         self._song = song
-        self._wav_info = {
-            'sample_rate': None,
-            'song_data': None
-        }
-        self._spectrum = {
-            'spectrum': None,
-            'times': None,
-            'freqs': None
-        }
-        self._coordinates = None
-        self._peaks = None
-        self._hash = None
+        self._wav_info = {}
+        self._spectrum = {}
+        self._coordinates = []
+        self._peaks = []
+        self._hashes = []
 
     def get_fingerprint(self, plot=False):
         """
@@ -49,26 +42,13 @@ class Fingerprint:
         self._generate_spectrum(plot=plot)
         print("spectrum generated")
         self._find_peaks()
-        print("peaks generated")
+        print("peaks generated: ", len(self._peaks))
 
-        if plot:  # plot if requested
-            plt.figure(figsize=(20, 8), facecolor='white')
-            plt.imshow(self._spectrum['spectrum'], cmap='viridis')
-            plt.scatter(self._coordinates[:, 1], self._coordinates[:, 0])
-            ax = plt.gca()
-            plt.xlabel('Spectrogram Width Units')
-            plt.ylabel('Spectrogram Height Units')
-            plt.title(self._song_id, fontsize=18)
-            plt.axis('auto')
-            ax.set_xlim([0, len(self._spectrum['times'])])
-            ax.set_ylim([len(self._spectrum['freqs']), 0])
-            ax.xaxis.set_ticklabels([])
-            ax.yaxis.set_ticklabels([])
-            plt.show()
+        if plot: self._plot_spectrum() # plot if requested
 
         self._generate_hash()
-        print("hash generated")
-        return self._hash
+        print("hash generated: ", len(self._hashes))
+        return self._hashes
 
     def _convert_to_wav(self):
         sample_rate, song_data = wavfile.read(self._song)
@@ -82,38 +62,29 @@ class Fingerprint:
 
     def _generate_spectrum(self, plot):
         song_left_channel = self._wav_info['song_data'][:, 0]
+        # TODO: create spectrum for other channles, or just save the number of chjannles
+        #  and iterate over them here and create a pectru list that then further has pectrum dicts
+        # TODO: store the fingerprint with the offsets and song_id in the sql;ite3 database
 
-        spectrum, freqs, times = specgram(
+        spectrum, freq, times = specgram(
             x=song_left_channel,
             Fs=self._wav_info['sample_rate'],
             NFFT=Fingerprint.NFFT_VALUE,
             noverlap=Fingerprint.OVERLAP_VALUE,
-            window=mlab.window_hanning # hanning to make the signal peridic
+            window=mlab.window_hanning  # hanning to make the signal periodic
         )
 
         spectrum[spectrum == 0] = 1e-6  # changing 0 values to 1e-6
         Z = 10.0 * np.log10(spectrum)  # apply log transform since specgram() returns linear array
         Z = np.flipud(Z)  # inverting y-axis of spectrum
 
-        if plot:
-            plt.figure(figsize=(20, 8), facecolor='white')
-            extent = 0, np.amax(times), freqs[0], freqs[-1]
-            Z = 10.0 * np.log10(spectrum)  # apply log transform since specgram() returns linear array
-            Z = np.flipud(Z)
-            plt.imshow(Z, cmap='viridis', extent=extent)
-            plt.xlabel('Time bin')
-            plt.ylabel('Frequency [Hz]')
-            plt.axis('auto')
-            ax = plt.gca()
-            ax.set_xlim([0, extent[1]])
-            ax.set_ylim([freqs[0], freqs[-1]])
-            plt.show()
-
         self._spectrum = {
             'spectrum': Z,
             'times': times,
-            'freqs': freqs
+            'freq': freq
         }
+
+        if plot: self._plot_spectrum()
 
     def _find_peaks(self):
         # finding peaks using scipy
@@ -129,7 +100,7 @@ class Fingerprint:
         wdt_of_spec = self._spectrum['spectrum'].shape[1]
 
         length_of_song = round(np.amax(self._spectrum['times']), Fingerprint.TIME_INTERVAL_PRECISION)
-        max_freq_of_song = self._spectrum['freqs'][-1]
+        max_freq_of_song = self._spectrum['freq'][-1]
 
         single_unit_time = round((length_of_song / wdt_of_spec), Fingerprint.TIME_INTERVAL_PRECISION)
         single_unit_freq = round((max_freq_of_song / ht_of_spec))
@@ -148,7 +119,6 @@ class Fingerprint:
         self._peaks = peaks
 
     def _generate_hash(self):
-
         hashed = set()  # preventing redundant hashes
 
         hashes = []
@@ -171,8 +141,31 @@ class Fingerprint:
 
                     hashed.add((i, i + j))
 
-        self._hash = hashes
+        self._hashes = hashes
+
+    def _plot_spectrum(self):
+        plt.figure(figsize=(20, 8), facecolor='white')
+
+        if len(self._coordinates) != 0: # draw peaks
+            extent = 0, len(self._spectrum['times']), len(self._spectrum['freq']), 0
+            plt.imshow(self._spectrum['spectrum'], cmap='viridis')
+            plt.scatter(self._coordinates[:, 1], self._coordinates[:, 0])
+            plt.xlabel('Spectrogram Width Units')
+            plt.ylabel('Spectrogram Height Units')
+            plt.title("Peaks: " + self._song_id, fontsize=18)
+        else:
+            extent = 0, np.amax(self._spectrum['times']), self._spectrum['freq'][0], self._spectrum['freq'][-1]
+            plt.imshow(self._spectrum['spectrum'], cmap='viridis', extent=extent)
+            plt.xlabel('Time bin')
+            plt.ylabel('Frequency [Hz]')
+            plt.title("Spectrum" + self._song_id)
+
+        plt.axis('auto')
+        ax = plt.gca()
+        ax.set_xlim([extent[0], extent[1]])
+        ax.set_ylim([extent[2], extent[3]])
+        plt.show()
 
 
 f = Fingerprint("F:\AF\wavs\Jonas Brothers.wav", "1")
-f.get_fingerprint(True)
+f.get_fingerprint()
