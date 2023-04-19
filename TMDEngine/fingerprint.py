@@ -13,14 +13,16 @@ class Fingerprint:
     MIN_DISTANCE_PEAKS = 15
     MIN_INTENSITY_OF_PEAKS = 20  # the more this value, less the noise errors
     TIME_INTERVAL_PRECISION = 3  # 0 = second, 3 = millisecond
-    MAX_SEGMENT_TO_FINGERPRINT = 15
+    MAX_SEGMENT_TO_FINGERPRINT = 15 # these number of peaks will be matched with a single peak
     MIN_TIME_DIFF = 0  # min time diff between peak frequencies
 
     def __init__(self, song, song_id):
         """
 
-        :param song: a string for the address of the file
-        :return Fingerprint Object: exposes a get_fingerprint method which returns a hash value,
+        :param:
+        song:  String representing the local address of the file\n
+        song_id: A Unique Value, identifying the songs in the database \n\n
+        :return: Fingerprint Object: exposes a get_fingerprint method which returns a hash value,
          representing the fingerprint
         """
         self._song_id = song_id
@@ -34,9 +36,9 @@ class Fingerprint:
     def get_fingerprint(self, plot=False, verbose=False):
         """
 
-        :param
-        plot: set True if the plots of spectrograms and peaks are desired, defaults to False
-        verbose: set True if detailed decriptions are desired, defaults to False
+        :param:
+        plot: Boolean, set True if the plots of spectrograms and peaks are desired, defaults to False\n
+        verbose: Boolean, set True if detailed decriptions are desired, defaults to False\n\n
 
         :return: list containing hash values, representing the fingerprint for each channel
         """
@@ -48,9 +50,9 @@ class Fingerprint:
         for channel in range(channels): # iterating over the functions for each channel
             self._generate_spectrum(plot=plot, channel=channel)
             if verbose: print("spectrum generated for channel ", channel)
+
             self._find_peaks()
             if verbose: print("peaks generated in channel {0}: {1}".format(channel, len(self._peaks)))
-
             if plot: self._plot_spectrum() # plot if requested
 
             self._generate_hash()
