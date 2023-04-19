@@ -17,7 +17,7 @@ def insert_fingerprints(fingerprint_list, verbose=False):
     # establishing a connection to the database
     db_conn = sqlite3.connect(DATABASE_NAME)
     db_cursor = db_conn.cursor()
-    recrod_no = 0
+    record_no = 0
     for fingerprint in fingerprint_list:
         hash_value = fingerprint[0]
         song_id = fingerprint[1][0]
@@ -37,10 +37,10 @@ def insert_fingerprints(fingerprint_list, verbose=False):
                 db_conn.rollback()  # rolling back the database to the last commit
                 raise e
 
-        recrod_no += 1
+        record_no += 1
         db_conn.commit()
         if verbose:
-            print("record num: ", recrod_no)
+            print("record num: ", record_no)
     db_conn.close()
 
     if verbose:
@@ -48,7 +48,6 @@ def insert_fingerprints(fingerprint_list, verbose=False):
 
 
 def display_fingerprint_table(hash_lookup):
-    print("hey")
     db_conn = sqlite3.connect(DATABASE_NAME)
     db_conn.row_factory = sqlite3.Row
 
@@ -62,6 +61,4 @@ def display_fingerprint_table(hash_lookup):
     for entry in rows:
         print(entry['hash'], entry['song_id'], entry['offset'])
 
-
-# insert_fingerprints([('49a9a1ed8a4d1a2e38d8', ('JB', 119.153))])
-display_fingerprint_table("ef87e5af240abe35cdbf")
+display_fingerprint_table("e7bcab739ebd2b1cb2d3")
