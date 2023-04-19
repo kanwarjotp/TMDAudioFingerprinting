@@ -12,19 +12,16 @@ DATABASE_NAME = 'FINGERPRINTS_SCHEMA'
 '''CREATE UNIQUE INDEX hash on fingerprint(hash);'''
 
 
-def insert_fingerprints(fingerprint_list, debug=False):
+def insert_fingerprints(fingerprint_list, verbose=False):
     num_duplicates = 0
     # establishing a connection to the database
     db_conn = sqlite3.connect(DATABASE_NAME)
     db_cursor = db_conn.cursor()
-
+    recrod_no = 0
     for fingerprint in fingerprint_list:
         hash_value = fingerprint[0]
         song_id = fingerprint[1][0]
         time_offset = fingerprint[1][1]
-
-        if debug:
-            print(hash_value, song_id, time_offset)
 
         sqlite_cmd = '''INSERT INTO fingerprint (hash, song_id, offset) VALUES("{0}", "{1}", "{2}");''' \
             .format(hash_value, song_id, time_offset)
@@ -40,19 +37,22 @@ def insert_fingerprints(fingerprint_list, debug=False):
                 db_conn.rollback()  # rolling back the database to the last commit
                 raise e
 
+        recrod_no += 1
         db_conn.commit()
-        db_conn.close()
+        if verbose:
+            print("record num: ", recrod_no)
+    db_conn.close()
 
-    if debug:
+    if verbose:
         print("Number of Duplicates :", num_duplicates)
 
 
-def display_fingerprint_table():
+def display_fingerprint_table(hash_lookup):
     db_conn = sqlite3.connect(DATABASE_NAME)
     db_conn.row_factory = sqlite3.Row
 
     db_cursor = db_conn.cursor()
-    sqlite_cmd = "SELECT * FROM fingerprint;"
+    sqlite_cmd = '''SELECT * FROM fingerprint where hash="";'''.format(hash_lookup)
     db_cursor.execute(sqlite_cmd)
 
     rows = db_cursor.fetchall()
@@ -63,4 +63,4 @@ def display_fingerprint_table():
 
 
 insert_fingerprints([('49a9a1ed8a4d1a2e38d8', ('JB', 119.153))])
-# display_fingerprint_table()
+display_fingerprint_table("ef87e5af240abe35cdbf")

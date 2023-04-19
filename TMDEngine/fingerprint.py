@@ -64,7 +64,7 @@ class Fingerprinter:
         if verbose: print("Total Hashes across {0} channel(s): {1}".format(channels, num_hashes_gen))
 
         # inserting the fingerprints to the database
-        # db.insert_fingerprints(hashes_total, 1)
+        db.insert_fingerprints(hashes_total, 1)
 
         return hashes_total
 
@@ -183,6 +183,6 @@ class Fingerprinter:
         plt.show()
 
 
-f = Fingerprinter("F:\AF\wavs\Jonas Brothers.wav", "JB")
+f = Fingerprinter("F:\AF\wavs\Jonas Brothers.wav", "Waffle_House_By_Jonas_Brothers")
 a = f.get_fingerprint(0 ,1)
 print(a[0])
