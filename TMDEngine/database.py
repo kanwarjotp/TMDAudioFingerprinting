@@ -12,7 +12,7 @@ DATABASE_NAME = 'FINGERPRINTS_SCHEMA'
 '''CREATE UNIQUE INDEX hash on fingerprint(hash);'''
 
 
-def insert_fingerprint(fingerprint_list, debug=False):
+def insert_fingerprints(fingerprint_list, debug=False):
     num_duplicates = 0
     # establishing a connection to the database
     db_conn = sqlite3.connect(DATABASE_NAME)
@@ -32,7 +32,8 @@ def insert_fingerprint(fingerprint_list, debug=False):
         try:
             db_cursor.execute(sqlite_cmd)
         except sqlite3.IntegrityError as e:
-            if "UNIQUE constraint failed: fingerprint.hash" == e.__str__():  # trying to add duplicate values
+            if "UNIQUE constraint failed:" in e.__str__():  # the unique constraint is violated
+                # trying to add duplicate values
                 num_duplicates += 1
                 continue
             else:
@@ -61,5 +62,5 @@ def display_fingerprint_table():
         print(entry['hash'], entry['song_id'], entry['offset'])
 
 
-insert_fingerprint([('49a9a1ed8a4d1a2e38d8', ('JB', 119.153))])
+insert_fingerprints([('49a9a1ed8a4d1a2e38d8', ('JB', 119.153))])
 # display_fingerprint_table()
