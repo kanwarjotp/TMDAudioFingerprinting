@@ -48,11 +48,12 @@ def insert_fingerprints(fingerprint_list, verbose=False):
 
 
 def display_fingerprint_table(hash_lookup):
+    print("hey")
     db_conn = sqlite3.connect(DATABASE_NAME)
     db_conn.row_factory = sqlite3.Row
 
     db_cursor = db_conn.cursor()
-    sqlite_cmd = '''SELECT * FROM fingerprint where hash="";'''.format(hash_lookup)
+    sqlite_cmd = '''SELECT * FROM fingerprint where hash="{0}";'''.format(hash_lookup)
     db_cursor.execute(sqlite_cmd)
 
     rows = db_cursor.fetchall()
@@ -62,5 +63,5 @@ def display_fingerprint_table(hash_lookup):
         print(entry['hash'], entry['song_id'], entry['offset'])
 
 
-insert_fingerprints([('49a9a1ed8a4d1a2e38d8', ('JB', 119.153))])
+# insert_fingerprints([('49a9a1ed8a4d1a2e38d8', ('JB', 119.153))])
 display_fingerprint_table("ef87e5af240abe35cdbf")
