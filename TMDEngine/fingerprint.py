@@ -5,12 +5,13 @@ from scipy.io import wavfile
 import matplotlib.mlab as mlab
 from matplotlib.mlab import specgram
 from skimage.feature import peak_local_max
+import database as db
 
 
 class Fingerprinter:
     NFFT_VALUE = 4096
     OVERLAP_VALUE = 2048
-    MIN_DISTANCE_PEAKS = 15 # decreasing minimum distance, increases the number of peaks found
+    MIN_DISTANCE_PEAKS = 20 # decreasing minimum distance, increases the number of peaks found
     MIN_INTENSITY_OF_PEAKS = 25  # the more this value, less the noise errors
     TIME_INTERVAL_PRECISION = 3  # 0 = second, 3 = millisecond
     MAX_SEGMENT_TO_FINGERPRINT = 15 # these number of peaks will be matched with a single peak
@@ -61,6 +62,10 @@ class Fingerprinter:
             hashes_total += self._hashes
 
         if verbose: print("Total Hashes across {0} channel(s): {1}".format(channels, num_hashes_gen))
+
+        # inserting the fingerprints to the database
+        # db.insert_fingerprints(hashes_total, 1)
+
         return hashes_total
 
     def _convert_to_wav(self):
