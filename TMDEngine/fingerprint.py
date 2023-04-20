@@ -1,10 +1,12 @@
 import hashlib
+
+import matplotlib.mlab as mlab
 import numpy as np
 from matplotlib import pyplot as plt
-from scipy.io import wavfile
-import matplotlib.mlab as mlab
 from matplotlib.mlab import specgram
+from scipy.io import wavfile
 from skimage.feature import peak_local_max
+
 import database as db
 
 
