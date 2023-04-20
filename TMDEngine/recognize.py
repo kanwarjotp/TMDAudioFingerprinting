@@ -13,7 +13,7 @@ class Recognizer:
         self._audio_file = audio_file
 
     def recognize_song(self):
-        fingerprinted = fingerprint.Fingerprinter(self._audio_file)
+        fingerprinted = fingerprint.Fingerprint(self._audio_file)
 
         hashes_of_sample = fingerprinted.get_fingerprint()
 
