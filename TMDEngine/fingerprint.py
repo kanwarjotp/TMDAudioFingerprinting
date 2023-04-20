@@ -8,22 +8,21 @@ from skimage.feature import peak_local_max
 import database as db
 
 
-class Fingerprinter:
+class Fingerprint:
     NFFT_VALUE = 4096
     OVERLAP_VALUE = 2048
-    MIN_DISTANCE_PEAKS = 20 # decreasing minimum distance, increases the number of peaks found
+    MIN_DISTANCE_PEAKS = 20  # decreasing minimum distance, increases the number of peaks found
     MIN_INTENSITY_OF_PEAKS = 25  # the more this value, less the noise errors
     TIME_INTERVAL_PRECISION = 3  # 0 = second, 3 = millisecond
-    MAX_SEGMENT_TO_FINGERPRINT = 15 # these number of peaks will be matched with a single peak
+    MAX_SEGMENT_TO_FINGERPRINT = 15  # these number of peaks will be matched with a single peak
     MIN_TIME_DIFF = 0  # min time diff between peak frequencies
 
     def __init__(self, song, song_id=None):
         """
 
-        :param:
-        song:  String representing the local address of the file\n
-        song_id: A Unique Value, identifying the songs in the database \n\n
-        :return: Fingerprinter Object: exposes the get_fingerprint() method which returns a hash value,
+        :param song:  String representing the local address of the file\n
+        :param song_id: A Unique Value, identifying the songs in the database \n\n
+        :return: Fingerprint Object: exposes the get_fingerprint() method which returns a hash value,
          representing the fingerprint
         """
         self._song_id = song_id
@@ -37,9 +36,8 @@ class Fingerprinter:
     def get_fingerprint(self, plot=False, verbose=False):
         """
 
-        :param:
-        plot: Boolean, set True if the plots of spectrograms and peaks are desired, defaults to False\n
-        verbose: Boolean, set True if detailed decriptions are desired, defaults to False\n\n
+        :param plot: Boolean, set True if the plots of spectrograms and peaks are desired, defaults to False
+        :param verbose: Boolean, set True if detailed decriptions are desired, defaults to False
 
         :return: list containing hash values, representing the fingerprint for the song
         """
@@ -48,13 +46,13 @@ class Fingerprinter:
         hashes_total = []
         num_hashes_gen = 0
         channels = self._wav_info['song_data'].shape[1]
-        for channel in range(channels): # iterating over the functions for each channel
+        for channel in range(channels):  # iterating over the functions for each channel
             self._generate_spectrum(plot=plot, channel=channel)
             if verbose: print("spectrum generated for channel ", channel)
 
             self._find_peaks()
             if verbose: print("peaks generated in channel {0}: {1}".format(channel, len(self._peaks)))
-            if plot: self._plot_spectrum() # plot if requested
+            if plot: self._plot_spectrum()  # plot if requested
 
             self._generate_hash()
             if verbose: print("hash generated in channel {0}: {1}".format(channel, len(self._hashes)))
@@ -85,8 +83,8 @@ class Fingerprinter:
         spectrum, freq, times = specgram(
             x=song_left_channel,
             Fs=self._wav_info['sample_rate'],
-            NFFT=Fingerprinter.NFFT_VALUE,
-            noverlap=Fingerprinter.OVERLAP_VALUE,
+            NFFT=Fingerprint.NFFT_VALUE,
+            noverlap=Fingerprint.OVERLAP_VALUE,
             window=mlab.window_hanning  # hanning to make the signal periodic
         )
 
@@ -106,8 +104,8 @@ class Fingerprinter:
         # finding peaks using scipy
         self._coordinates = peak_local_max(
             self._spectrum['spectrum'],
-            min_distance=Fingerprinter.MIN_DISTANCE_PEAKS,
-            threshold_abs=Fingerprinter.MIN_INTENSITY_OF_PEAKS
+            min_distance=Fingerprint.MIN_DISTANCE_PEAKS,
+            threshold_abs=Fingerprint.MIN_INTENSITY_OF_PEAKS
         )
 
         peaks = []  # list to store peaks for the songs
@@ -115,15 +113,15 @@ class Fingerprinter:
         ht_of_spec = self._spectrum['spectrum'].shape[0]
         wdt_of_spec = self._spectrum['spectrum'].shape[1]
 
-        length_of_song = round(np.amax(self._spectrum['times']), Fingerprinter.TIME_INTERVAL_PRECISION)
+        length_of_song = round(np.amax(self._spectrum['times']), Fingerprint.TIME_INTERVAL_PRECISION)
         max_freq_of_song = self._spectrum['freq'][-1]
 
-        single_unit_time = round((length_of_song / wdt_of_spec), Fingerprinter.TIME_INTERVAL_PRECISION)
+        single_unit_time = round((length_of_song / wdt_of_spec), Fingerprint.TIME_INTERVAL_PRECISION)
         single_unit_freq = round((max_freq_of_song / ht_of_spec))
 
         for i in self._coordinates:
             # converting x coordinates to time in seconds
-            time_coordinate = round(single_unit_time * i[1], Fingerprinter.TIME_INTERVAL_PRECISION)
+            time_coordinate = round(single_unit_time * i[1], Fingerprint.TIME_INTERVAL_PRECISION)
 
             # converting y coordinates to frequency in Hz
             freq_coordinates = round(single_unit_freq * (ht_of_spec - i[0]))
@@ -141,7 +139,7 @@ class Fingerprinter:
         peaks = self._peaks
 
         for i in range(len(peaks)):
-            for j in range(Fingerprinter.MAX_SEGMENT_TO_FINGERPRINT):
+            for j in range(Fingerprint.MAX_SEGMENT_TO_FINGERPRINT):
                 if i + j < len(peaks) and not (i, i + j) in hashed:
                     f1 = peaks[i][1]
                     f2 = peaks[i + j][1]
@@ -149,7 +147,7 @@ class Fingerprinter:
                     t2 = peaks[i + j][0]
                     t_diff = t2 - t1
 
-                    if t_diff >= Fingerprinter.MIN_TIME_DIFF:
+                    if t_diff >= Fingerprint.MIN_TIME_DIFF:
                         # hash this value
                         h = hashlib.sha1(("{0}{1}{2}".format(str(f1), str(f2), str(t_diff))).encode('utf-8'))
                         # truncating the hash to conserve storage
@@ -162,7 +160,7 @@ class Fingerprinter:
     def _plot_spectrum(self):
         plt.figure(figsize=(20, 8), facecolor='white')
 
-        if len(self._coordinates) != 0: # draw peaks
+        if len(self._coordinates) != 0:  # draw peaks
             extent = 0, len(self._spectrum['times']), len(self._spectrum['freq']), 0
             plt.imshow(self._spectrum['spectrum'], cmap='viridis')
             plt.scatter(self._coordinates[:, 1], self._coordinates[:, 0])
@@ -182,7 +180,4 @@ class Fingerprinter:
         ax.set_ylim([extent[2], extent[3]])
         plt.show()
 
-
-f = Fingerprinter("F:\AF\wavs\Jonas Brothers.wav", "Waffle_House_By_Jonas_Brothers")
-a = f.get_fingerprint(0 ,1)
-print(a[0])
+# TODO: change the time to ints or the storage type to float, read up on this
