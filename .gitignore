@@ -137,3 +137,6 @@ dmypy.json
 **.zip
 
 console_outputs/
+
+#development scripts
+dev.py
