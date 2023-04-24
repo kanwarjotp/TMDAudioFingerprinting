@@ -88,7 +88,10 @@ class SQLConnection:
             print(err.msg)
 
     def insert_song(self, song_name: str):
-        add_song = '''INSERT INTO song (song_name) VALUE ("{}")'''
+        try:
+            add_song = '''INSERT INTO song (song_name) VALUE ("{}")'''
 
-        self._cur.execute(add_song.format(song_name))
-        self._cnx.commit()
+            self._cur.execute(add_song.format(song_name))
+            self._cnx.commit()
+        except mysql.connector.Error as err:
+            print(err.msg)
