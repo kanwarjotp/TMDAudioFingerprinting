@@ -64,7 +64,7 @@ class Fingerprint:
         if verbose: print("Total Hashes across {0} channel(s): {1}".format(channels, num_hashes_gen))
 
         # inserting the fingerprints to the database
-        db.insert_fingerprints(hashes_total, 1)
+        # db.insert_fingerprints(hashes_total, 1)
 
         return hashes_total
 
@@ -135,6 +135,7 @@ class Fingerprint:
         self._peaks = peaks
 
     def _generate_hash(self):
+        # hashes are stored as (hash_vale, (song_id, time_offset))
         hashed = set()  # preventing redundant hashes
 
         hashes = []
@@ -152,7 +153,6 @@ class Fingerprint:
                     if t_diff >= Fingerprint.MIN_TIME_DIFF:
                         # hash this value
                         h = hashlib.sha1(("{0}{1}{2}".format(str(f1), str(f2), str(t_diff))).encode('utf-8'))
-                        # truncating the hash to conserve storage
                         hashes.append((h.hexdigest()[0:20], (self._song_id, t1)))
 
                     hashed.add((i, i + j))
@@ -182,4 +182,7 @@ class Fingerprint:
         ax.set_ylim([extent[2], extent[3]])
         plt.show()
 
+
 # TODO: change the time to ints or the storage type to float, read up on this
+
+a = Fingerprint("wavs/1,wav", 1)
