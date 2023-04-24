@@ -19,7 +19,7 @@ class Fingerprint:
     MAX_SEGMENT_TO_FINGERPRINT = 15  # these number of peaks will be matched with a single peak
     MIN_TIME_DIFF = 0  # min time diff between peak frequencies
 
-    def __init__(self, song, song_id=None):
+    def __init__(self, song: str, song_id: int = None):
         """
 
         :param song:  String representing the local address of the file\n
@@ -35,7 +35,7 @@ class Fingerprint:
         self._peaks = []
         self._hashes = []
 
-    def get_fingerprint(self, plot=False, verbose=False):
+    def get_fingerprint(self, plot: bool = False, verbose: bool = False):
         """
 
         :param plot: Boolean, set True if the plots of spectrograms and peaks are desired, defaults to False
@@ -78,7 +78,7 @@ class Fingerprint:
 
         self._wav_info = data_dict
 
-    def _generate_spectrum(self, plot, channel):
+    def _generate_spectrum(self, plot: bool, channel: int):
         song_left_channel = self._wav_info['song_data'][:, channel]
         # TODO: store the fingerprint with the offsets and song_id in the sql;ite3 database
 
@@ -181,8 +181,3 @@ class Fingerprint:
         ax.set_xlim([extent[0], extent[1]])
         ax.set_ylim([extent[2], extent[3]])
         plt.show()
-
-
-# TODO: change the time to ints or the storage type to float, read up on this
-
-a = Fingerprint("wavs/1,wav", 1)
