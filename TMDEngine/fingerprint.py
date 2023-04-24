@@ -7,7 +7,7 @@ from matplotlib.mlab import specgram
 from scipy.io import wavfile
 from skimage.feature import peak_local_max
 
-import database as db
+import sqlite_database as db
 
 
 class Fingerprint:
