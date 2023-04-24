@@ -7,8 +7,6 @@ from matplotlib.mlab import specgram
 from scipy.io import wavfile
 from skimage.feature import peak_local_max
 
-import sqlite_database as db
-
 
 class Fingerprint:
     NFFT_VALUE = 4096
@@ -62,9 +60,6 @@ class Fingerprint:
             hashes_total += self._hashes
 
         if verbose: print("Total Hashes across {0} channel(s): {1}".format(channels, num_hashes_gen))
-
-        # inserting the fingerprints to the database
-        # db.insert_fingerprints(hashes_total, 1)
 
         return hashes_total
 
@@ -154,6 +149,7 @@ class Fingerprint:
                         # hash this value
                         h = hashlib.sha1(("{0}{1}{2}".format(str(f1), str(f2), str(t_diff))).encode('utf-8'))
                         hashes.append((h.hexdigest()[0:20], (self._song_id, t1)))
+                        # converting the string hash to a hexadecimal notation and truncating it to first 20 chars
 
                     hashed.add((i, i + j))
 
