@@ -1,4 +1,5 @@
 import sqlite3
+import sys
 
 DATABASE_NAME = 'FINGERPRINTS_SCHEMA'
 
@@ -36,7 +37,7 @@ def insert_fingerprints(fingerprint_list, verbose=False):
         song_id = fingerprint[1][0]
         time_offset = fingerprint[1][1]
 
-        sqlite_cmd = '''INSERT INTO fingerprint (hash, song_id, offset) VALUES("{0}", "{1}", "{2}");''' \
+        sqlite_cmd = '''INSERT INTO fingerprint (hash, song_id, offset) VALUES({0}, {1}, {2});''' \
             .format(hash_value, song_id, time_offset)
 
         try:
@@ -111,7 +112,9 @@ def find_hash(hash_lookup):
     db_conn.close()
 
     for entry in rows:
-        print(entry['hash'], entry['song_id'], entry['offset'])
+        matches = (entry['hash'], entry['song_id'], entry['offset'])
+
+    return matches
 
 
 def change_song_name(song_name, new_song_name):
