@@ -144,5 +144,3 @@ class SQLConnection:
 
 
 test_cnx = SQLConnection()
-sid = test_cnx.insert_song("Hay")
-print(test_cnx.find_song(sid[0][0]))
