@@ -1,5 +1,6 @@
 import mysql.connector
 from mysql.connector import errorcode
+
 import config
 
 
@@ -76,13 +77,8 @@ class SQLConnection:
     def insert_fingerprint(self, fingerprint: tuple):
         # (hash_val, (song_id, freq))
         try:
-            add_fingerprint = ("INSERT INTO fingerprint "
-                               "(hash, song_id, offset) "
-                               "VALUES (%s, %s, %s)")
-
-            data_fingerprint = (fingerprint[0], fingerprint[1][0], fingerprint[1][1])
-
-            self._cur.execute(add_fingerprint, data_fingerprint)
+            add_fingerprint = "INSERT INTO fingerprint (hash, song_id, offset) VALUES (UNHEX('{0}'), {1}, {2})"
+            self._cur.execute(add_fingerprint.format(fingerprint[0], fingerprint[1][0], fingerprint[1][1]))
             self._cnx.commit()
         except mysql.connector.Error as err:
             print(err.msg)
@@ -95,3 +91,29 @@ class SQLConnection:
             self._cnx.commit()
         except mysql.connector.Error as err:
             print(err.msg)
+
+    def find_fingerprint(self, fprint_hash: str):
+        fingerprints = []
+        cursor = self._cnx.cursor()
+
+        # finding out how the hash is stored in sql and then recreating it here to query
+        find_hex_not_sql = '''select hex((unhex('{}')))'''.format(fprint_hash)
+        cursor.execute(find_hex_not_sql)
+        sub_20 = 0
+        for i in cursor:
+            sub_20 = i[0]
+        zeroes_to_add = 20 - len(sub_20)
+        final_query_hash = sub_20 + ("0" * zeroes_to_add)  #hash to query with
+
+        # querying the hash
+        find_fprint = '''select hex(hash), song_id, offset from fingerprint where
+                            hex(hash) = "{}"'''
+        cursor.execute(find_fprint.format(final_query_hash))
+        for result in cursor:
+            fingerprints.append(result)
+        cursor.close()
+
+        return fingerprints
+
+
+test_cnx = SQLConnection()
