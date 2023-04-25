@@ -84,6 +84,8 @@ class SQLConnection:
             print(err.msg)
 
     def insert_song(self, song_name: str):
+        s_id = []
+
         try:
             add_song = '''INSERT INTO song (song_name) VALUE ("{}")'''
 
@@ -91,6 +93,15 @@ class SQLConnection:
             self._cnx.commit()
         except mysql.connector.Error as err:
             print(err.msg)
+
+        cursor = self._cnx.cursor()
+        select_song_id = '''SELECT song_id FROM song WHERE song_name = "{}"'''
+        cursor.execute(select_song_id.format(song_name))
+
+        for result in cursor.fetchall():
+            s_id.append(result)
+        cursor.close()
+        return s_id
 
     def find_fingerprint(self, fprint_hash: str):
         fingerprints = []
@@ -103,17 +114,35 @@ class SQLConnection:
         for i in cursor:
             sub_20 = i[0]
         zeroes_to_add = 20 - len(sub_20)
-        final_query_hash = sub_20 + ("0" * zeroes_to_add)  #hash to query with
+        final_query_hash = sub_20 + ("0" * zeroes_to_add)  # hash to query with
 
         # querying the hash
-        find_fprint = '''select hex(hash), song_id, offset from fingerprint where
+        select_fprint = '''select hex(hash), song_id, offset from fingerprint where
                             hex(hash) = "{}"'''
-        cursor.execute(find_fprint.format(final_query_hash))
+        cursor.execute(select_fprint.format(final_query_hash))
         for result in cursor:
             fingerprints.append(result)
         cursor.close()
 
         return fingerprints
 
+    def find_song(self, song_id: int):
+        song_info = []
+        select_song = '''SELECT song_id, song_name, fingerprinted FROM song WHERE song_id = {}'''
+
+        try:
+            cursor = self._cnx.cursor()
+            cursor.execute(select_song.format(song_id))
+        except mysql.connector.Error as err:
+            print(err)
+
+        for result in cursor:
+            song_info.append(result)
+
+        cursor.close()
+        return song_info
+
 
 test_cnx = SQLConnection()
+sid = test_cnx.insert_song("Hay")
+print(test_cnx.find_song(sid[0][0]))
