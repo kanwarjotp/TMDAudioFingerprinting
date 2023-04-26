@@ -11,22 +11,21 @@ from skimage.feature import peak_local_max
 class Fingerprint:
     NFFT_VALUE = 4096
     OVERLAP_VALUE = 2048
-    MIN_DISTANCE_PEAKS = 20  # decreasing minimum distance, increases the number of peaks found
+    MIN_DISTANCE_PEAKS = 15  # decreasing minimum distance, increases the number of peaks found
     MIN_INTENSITY_OF_PEAKS = 25  # the more this value, less the noise errors
-    TIME_INTERVAL_PRECISION = 3  # 0 = second, 3 = millisecond
     MAX_SEGMENT_TO_FINGERPRINT = 15  # these number of peaks will be matched with a single peak
     MIN_TIME_DIFF = 0  # min time diff between peak frequencies
 
-    def __init__(self, song: str, song_id: int = None):
+    def __init__(self, song_address: str, song_id: int = None):
         """
 
-        :param song:  String representing the local address of the file\n
+        :param song_address:  String representing the local address of the file\n
         :param song_id: A Unique Value, identifying the songs in the database \n\n
         :return: Fingerprint Object: exposes the get_fingerprint() method which returns a hash value,
          representing the fingerprint
         """
         self._song_id = song_id
-        self._song = song
+        self._song = song_address
         self._wav_info = {}
         self._spectrum = {}
         self._coordinates = []
@@ -39,7 +38,7 @@ class Fingerprint:
         :param plot: Boolean, set True if the plots of spectrograms and peaks are desired, defaults to False
         :param verbose: Boolean, set True if detailed decriptions are desired, defaults to False
 
-        :return: list containing hash values, representing the fingerprint for the song
+        :return: list containing hash values, representing the fingerprint for the song_address
         """
         self._convert_to_wav()
         if verbose: print("wav file generated")
@@ -118,7 +117,7 @@ class Fingerprint:
 
         for i in self._coordinates:
             # converting x coordinates to time in seconds
-            time_coordinate = round(single_unit_time * i[1], Fingerprint.TIME_INTERVAL_PRECISION)
+            time_coordinate = int(single_unit_time * i[1])
 
             # converting y coordinates to frequency in Hz
             freq_coordinates = round(single_unit_freq * (ht_of_spec - i[0]))
