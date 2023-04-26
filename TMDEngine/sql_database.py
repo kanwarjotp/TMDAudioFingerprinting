@@ -143,5 +143,11 @@ class SQLConnection:
         cursor.close()
         return song_info
 
+    def change_fingerprinted_flag(self, song_id: int, fingerprinted_value: bool):
 
-test_cnx = SQLConnection()
+        change_f_val = "UPDATE song SET fingerprinted = {0} WHERE song_id = {1}"
+        f_val = 0
+        if fingerprinted_value:
+            f_val = 1
+        self._cur.execute(change_f_val.format(f_val, song_id))
+        self._cnx.commit()
