@@ -1,7 +1,7 @@
 import mysql.connector
 from mysql.connector import errorcode
 
-import config
+from TMDEngine.dev import config
 
 
 class SQLConnection:
@@ -36,7 +36,7 @@ class SQLConnection:
             elif err.errno == errorcode.ER_BAD_DB_ERROR:
                 print("Database does not exist")
             else:
-                print(err)
+                raise err
 
     def close_cnx(self):
         self._cnx.close()
@@ -61,8 +61,7 @@ class SQLConnection:
                 print("Database {} created successfully.".format(db_name))
                 self._cnx.database = db_name
             else:
-                print(err)
-                exit(1)
+                raise err
 
     def create_tables(self):
         for table_name in SQLConnection.TABLES:
@@ -73,7 +72,7 @@ class SQLConnection:
                 if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
                     print("Already Exists")
                 else:
-                    print(err.msg)
+                    raise err
 
     def insert_fingerprint(self, fingerprint: tuple):
         # (hash_val, (song_id, freq))
@@ -93,7 +92,10 @@ class SQLConnection:
             self._cur.execute(add_song.format(song_name))
             self._cnx.commit()
         except mysql.connector.Error as err:
-            print(err.msg)
+            if err.errno == 1062:
+                print("Song already present in database, try a different name for:", song_name)
+            else:
+                raise err
 
         cursor = self._cnx.cursor()
         select_song_id = '''SELECT song_id FROM song WHERE song_name = "{}"'''
@@ -135,7 +137,7 @@ class SQLConnection:
             cursor = self._cnx.cursor()
             cursor.execute(select_song.format(song_id))
         except mysql.connector.Error as err:
-            print(err)
+            raise err
 
         for result in cursor:
             song_info.append(result)
