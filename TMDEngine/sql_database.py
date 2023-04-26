@@ -100,9 +100,9 @@ class SQLConnection:
         cursor.execute(select_song_id.format(song_name))
 
         for result in cursor.fetchall():
-            s_id.append(result)
+            s_id.append(result[0])
         cursor.close()
-        return s_id
+        return s_id[0]
 
     def find_fingerprint(self, fprint_hash: str):
         fingerprints = []
