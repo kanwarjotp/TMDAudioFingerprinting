@@ -94,6 +94,7 @@ class SQLConnection:
         except mysql.connector.Error as err:
             if err.errno == 1062:
                 print("Song already present in database, try a different name for:", song_name)
+                return -1
             else:
                 raise err
 
