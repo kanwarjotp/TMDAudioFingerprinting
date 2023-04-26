@@ -18,7 +18,7 @@ class SQLConnection:
         'song': '''
             CREATE TABLE song (
             song_id mediumint unsigned not null auto_increment, 
-            song_name varchar(250) not null,
+            song_name varchar(250) unique not null,
             fingerprinted tinyint default 0,
             PRIMARY KEY (song_id),
             UNIQUE KEY song_id (song_id)
@@ -50,6 +50,7 @@ class SQLConnection:
         self._cnx.commit()
         print("Database Created: ", db_name)
 
+    # not required if conf,py specifies the database to be used.
     def use_database(self, db_name: str):
         try:
             self._cur.execute("USE {}".format(db_name))
@@ -114,12 +115,12 @@ class SQLConnection:
         for i in cursor:
             sub_20 = i[0]
         zeroes_to_add = 20 - len(sub_20)
-        final_query_hash = sub_20 + ("0" * zeroes_to_add)  # hash to query with
+        final_hash_query = sub_20 + ("0" * zeroes_to_add)  # hash to query with
 
         # querying the hash
         select_fprint = '''select hex(hash), song_id, offset from fingerprint where
                             hex(hash) = "{}"'''
-        cursor.execute(select_fprint.format(final_query_hash))
+        cursor.execute(select_fprint.format(final_hash_query))
         for result in cursor:
             fingerprints.append(result)
         cursor.close()
