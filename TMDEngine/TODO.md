@@ -1,2 +1,18 @@
-1. decrease the size of hash strings, at present its 69 bytes, the original hash is 32 bytes but after slicing it, the new size is 69 bytes wtf?
-2. find a server to host your website(firebase)
+# TODO.md
+
+TMDEngine TODO list.
+
+### Todo
+
+- [ ] Create the aligning function for fingerprints 
+- [ ] Find a server to host your website.
+
+
+### In Progress
+
+- [ ] Create the build script for the app.
+
+
+### Done ✓
+
+- [x] Update sql_database to integrate it with the rest of the application.
