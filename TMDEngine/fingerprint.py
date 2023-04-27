@@ -17,7 +17,7 @@ class Fingerprint:
     TIME_INTERVAL_PRECISION = 3
     MIN_TIME_DIFF = 0  # min time diff between peak frequencies
 
-    def __init__(self, song_address: str, song_id: int = None):
+    def __init__(self, song_address: str, song_id: int = 0):  # when song_id = 0, indicates a user's recording
         """
 
         :param song_address:  String representing the local address of the file\n
