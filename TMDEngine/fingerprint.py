@@ -28,6 +28,7 @@ class Fingerprint:
         self._song_id = song_id
         self._song = song_address
         self._wav_info = {}
+        self._mono = False
         self._spectrum = {}
         self._coordinates = []
         self._peaks = []
@@ -45,7 +46,14 @@ class Fingerprint:
         if verbose: print("wav file generated")
         hashes_total = []
         num_hashes_gen = 0
-        channels = self._wav_info['song_data'].shape[1]
+
+        if len(self._wav_info['song_data'].shape) != 1:
+            channels = self._wav_info['song_data'].shape[1]
+        else:
+            # in case of a Single channel:
+            channels = 1
+            self._mono = True
+
         for channel in range(channels):  # iterating over the functions for each channel
             self._generate_spectrum(plot=plot, channel=channel)
             if verbose: print("spectrum generated for channel ", channel)
@@ -74,11 +82,14 @@ class Fingerprint:
         self._wav_info = data_dict
 
     def _generate_spectrum(self, plot: bool, channel: int):
-        song_left_channel = self._wav_info['song_data'][:, channel]
+        if not self._mono:
+            song_channel = self._wav_info['song_data'][:, channel]
+        else:
+            song_channel = self._wav_info['song_data']
         # TODO: store the fingerprint with the offsets and song_id in the sql;ite3 database
 
         spectrum, freq, times = specgram(
-            x=song_left_channel,
+            x=song_channel,
             Fs=self._wav_info['sample_rate'],
             NFFT=Fingerprint.NFFT_VALUE,
             noverlap=Fingerprint.OVERLAP_VALUE,
