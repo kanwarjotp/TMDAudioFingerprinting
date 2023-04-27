@@ -48,9 +48,10 @@ def add_song_to_app(name: str, song_address: str):
         print("Song already present in database")
 
 
-song_info_dict = get_files(config.files_folder)
+def build_app():
+    song_info_dict = get_files(config.files_folder)
 
-for song_name in song_info_dict.keys():
-    print(song_name, song_info_dict[song_name])
+    for song_name in song_info_dict.keys():
+        print(song_name, song_info_dict[song_name])
 
-    add_song_to_app(song_name, song_info_dict[song_name])
+        add_song_to_app(song_name, song_info_dict[song_name])
