@@ -35,13 +35,15 @@ def add_song_to_app(name: str, song_address: str):
 
         f = fingerprint.Fingerprint(song_address, song_id)
         fingerprints = f.get_fingerprint(plot=False, verbose=True)
+        num_fingerprints = len(fingerprints)
 
         for fprint in fingerprints:
             num_duplicates += database_cnxn.insert_fingerprint(fprint)
 
+        dup_perc = (num_fingerprints - num_duplicates) / num_fingerprints
         database_cnxn.change_fingerprinted_flag(song_id, True)
-        print("Unique Fingerprints for {0}, id {1} inserted: {2}.\n Originally {3} duplicates \n\n".
-              format(name, song_id, len(fingerprints) - num_duplicates, num_duplicates))
+        print("Unique Fingerprints for {0}, id {1} inserted: {2}.\n Originally {3}% duplicates \n\n".
+              format(name, song_id, num_fingerprints,  dup_perc))
     else:
         print("Song already present in database")
 
