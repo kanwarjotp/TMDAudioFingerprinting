@@ -75,13 +75,23 @@ class SQLConnection:
                     raise err
 
     def insert_fingerprint(self, fingerprint: tuple):
+        """
+
+        :param fingerprint: a tuple: (hash_value, (song_id, time_offset))
+        :return:
+        """
         # (hash_val, (song_id, freq))
+        num_duplicate_hashes = 0
         try:
             add_fingerprint = "INSERT INTO fingerprint (hash, song_id, offset) VALUES (UNHEX('{0}'), {1}, {2})"
             self._cur.execute(add_fingerprint.format(fingerprint[0], fingerprint[1][0], fingerprint[1][1]))
             self._cnx.commit()
+            return 0  # not a duplicate
         except mysql.connector.Error as err:
-            print(err.msg)
+            if err.errno == 1062:
+                return 1
+            else:
+                raise err
 
     def insert_song(self, song_name: str):
         s_id = []
@@ -132,7 +142,7 @@ class SQLConnection:
 
     def find_song(self, song_id: int):
         song_info = []
-        select_song = '''SELECT song_id, song_name, fingerprinted FROM song WHERE song_id = {}'''
+        select_song = '''SELECT song_id, name, fingerprinted FROM song WHERE song_id = {}'''
 
         try:
             cursor = self._cnx.cursor()
