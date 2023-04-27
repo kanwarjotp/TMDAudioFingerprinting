@@ -5,7 +5,7 @@ TMDEngine TODO list.
 ### Todo
 
 - [ ] Find a server to host your website.
-
+- [ ] Create a workable recorder, at present the recordings from record.py are useless.
 
 ### In Progress
 
