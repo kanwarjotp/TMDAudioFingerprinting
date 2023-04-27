@@ -14,6 +14,7 @@ class Fingerprint:
     MIN_DISTANCE_PEAKS = 15  # decreasing minimum distance, increases the number of peaks found
     MIN_INTENSITY_OF_PEAKS = 25  # the more this value, less the noise errors
     MAX_SEGMENT_TO_FINGERPRINT = 15  # these number of peaks will be matched with a single peak
+    TIME_INTERVAL_PRECISION = 3
     MIN_TIME_DIFF = 0  # min time diff between peak frequencies
 
     def __init__(self, song_address: str, song_id: int = None):
