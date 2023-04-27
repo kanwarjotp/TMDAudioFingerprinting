@@ -1,9 +1,13 @@
 
 ## Development Notes:
 
-1. flexible typing iun SQLITE allows us to store values as integere without worrying about upper limits hence the
+1. flexible typing iun SQLITE allows us to store values as integers without worrying about upper limits hence the
 <b>song</b> table can use INTEGER without being concerned about the number of songs
-2. 
+2. for unknown songs, the song_id will be set to 0 to be passed to Fingerprint Object.
+3.  The way matched_fingerprints are stored in recognize.py is quite confusing and increases the space complexity, 
+but it prevents the  function from going into a Quadratic time complexity, as the other way would have me aligning 
+the fingerprints as they are found and directly storing the (song_id, difference pairs)
+which is the better option in terms of logical clarity, but costly.
 
 ## Database
 ### Song Table
