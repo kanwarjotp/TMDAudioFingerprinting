@@ -17,5 +17,6 @@ TMDEngine TODO list.
 - [x] Create the build script for the app.
 - [x] Adding fingerprints to the database
 - [x] Create the aligning function for fingerprints.
+- [x] Create run Script
 
 
