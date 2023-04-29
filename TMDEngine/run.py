@@ -32,7 +32,7 @@ print("\n\n all pairs : \n {} \n\n".format(all_pairs))
 
 song_id, dict_songs = recognize.find_final_song_id(all_pairs)
 
-print("\n\n*************\n{0}\n*************\n\n, {1}".format(song_id, dict_songs))
+print("\n\n*************\n{0}\n*************\n\n {1}".format(song_id, dict_songs))
 exit(0)
 # align the fingerprints received from the database and store them as (song_id, time_difference)
 aligned_matching_fingerprints = []
