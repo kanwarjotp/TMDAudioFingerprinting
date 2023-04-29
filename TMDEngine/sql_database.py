@@ -165,3 +165,9 @@ class SQLConnection:
             f_val = 1
         self._cur.execute(change_f_val.format(f_val, song_id))
         self._cnx.commit()
+
+
+# testing new fingerprint parameters
+test_db_conn = SQLConnection()
+test_db_conn.use_database(config.test_schema)
+test_db_conn.create_tables()
