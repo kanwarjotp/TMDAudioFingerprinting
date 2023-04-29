@@ -32,7 +32,6 @@ def align_matches(fingerprint_of_sample: tuple, list_of_matched_fingerprints: li
     aligned_matches = []
     for each_match_fprint in list_of_matched_fingerprints:
         # time offset from matched_fprint - time_offset from each_s_fprint
-        print(each_match_fprint)
         difference = each_match_fprint[2] - fingerprint_of_sample[1][1]
         song_id_of_match = each_match_fprint[1]
 
