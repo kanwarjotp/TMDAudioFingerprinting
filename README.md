@@ -8,6 +8,7 @@
 but it prevents the  function from going into a Quadratic time complexity, as the other way would have me aligning 
 the fingerprints as they are found and directly storing the (song_id, difference pairs)
 which is the better option in terms of logical clarity, but costly.
+4. <b>Song Prediction now works.</b>
 
 ## Database
 ### Song Table
