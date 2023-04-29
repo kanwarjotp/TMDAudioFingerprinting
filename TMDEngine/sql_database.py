@@ -81,7 +81,6 @@ class SQLConnection:
         :return:
         """
         # (hash_val, (song_id, freq))
-        num_duplicate_hashes = 0
         try:
             add_fingerprint = "INSERT INTO fingerprint (hash, song_id, offset) VALUES (UNHEX('{0}'), {1}, {2})"
             self._cur.execute(add_fingerprint.format(fingerprint[0], fingerprint[1][0], fingerprint[1][1]))
@@ -134,7 +133,7 @@ class SQLConnection:
         # querying the hash
         select_fprint = '''select hex(hash), song_id, offset from fingerprint where
                             hex(hash) = "{}"'''
-        cursor.execute(select_fprint.format(fprint_hash)) # TODO: this loop can be optimized
+        cursor.execute(select_fprint.format(fprint_hash))  # TODO: this loop can be optimized
         for result in cursor:
             fingerprints.append(result)
         cursor.close()
@@ -166,8 +165,5 @@ class SQLConnection:
         self._cur.execute(change_f_val.format(f_val, song_id))
         self._cnx.commit()
 
-
-# testing new fingerprint parameters
-test_db_conn = SQLConnection()
-test_db_conn.use_database(config.test_schema)
-test_db_conn.create_tables()
+    def delete_database(self, db_name: str):
+        self._cur.execute('''DROP DATABASE {}'''.format(db_name))
