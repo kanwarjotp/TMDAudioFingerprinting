@@ -50,6 +50,10 @@ def add_song_to_app(name: str, song_address: str):
 
 def build_app():
     # deleting pre-existing database
+    if config.are_you_sure:
+        pass
+    else:
+        raise ValueError("This action will delete the existing database. Please make necessaary check before re running.")
     db_conn = db.SQLConnection()
     db_conn.delete_database(config.test_schema)
     db_conn.create_database(config.test_schema)
