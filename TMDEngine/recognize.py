@@ -38,3 +38,23 @@ def align_matches(fingerprint_of_sample: tuple, list_of_matched_fingerprints: li
         aligned_matches.append((song_id_of_match, difference))
 
     return aligned_matches
+
+
+def find_final_song_id(pairs):
+    counts_tds = dict()
+
+    for i in pairs:
+        tds = i[2]  # the time differences
+        counts_tds[tds] = counts_tds.get(tds, 0) + 1
+
+    max_tds_count = max(counts_tds, key=counts_tds.get)
+
+    songs_max_tds = {}
+    for i in pairs:
+        if i[2] == max_tds_count:
+            sid = i[1]
+            songs_max_tds[sid] = songs_max_tds.get(sid, 0) + 1
+
+    return max(songs_max_tds, key=songs_max_tds.get), songs_max_tds
+
+
