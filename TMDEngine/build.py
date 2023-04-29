@@ -53,7 +53,8 @@ def build_app():
     if config.are_you_sure:
         pass
     else:
-        raise ValueError("This action will delete the existing database. Please make necessaary check before re running.")
+        raise ValueError("This action will delete the existing database. Please make necessary check before re "
+                         "running.")
     db_conn = db.SQLConnection()
     db_conn.delete_database(config.test_schema)
     db_conn.create_database(config.test_schema)
@@ -69,4 +70,3 @@ def build_app():
         add_song_to_app(key, song_info_dict[key])
 
 
-build_app()
