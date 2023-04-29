@@ -1,4 +1,3 @@
-import sys
 import wave
 
 import pyaudio
