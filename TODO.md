@@ -9,7 +9,9 @@ TMDEngine TODO list.
 
 ### In Progress
 
-- [ ] Decrease the lookup time for matching fingerprints, uit takes 8 min+ for a sample with 678 fingerprints
+- [ ] Decrease the lookup time for matching fingerprints, uit takes 8 min+ for a sample with 678 fingerprints.
+- [ ] Change the code for fingerprints, reducing the number of fingerprints created, while making
+the process of tweaking the parameters to get more informative fingerprints.
 
 ### Done ✓
 
