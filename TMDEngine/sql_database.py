@@ -142,7 +142,7 @@ class SQLConnection:
 
     def find_song(self, song_id: int):
         song_info = []
-        select_song = '''SELECT song_id, name, fingerprinted FROM song WHERE song_id = {}'''
+        select_song = '''SELECT song_id, song_name, fingerprinted FROM song WHERE song_id = {}'''
 
         try:
             cursor = self._cnx.cursor()
