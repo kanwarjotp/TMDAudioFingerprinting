@@ -188,3 +188,9 @@ class Fingerprint:
         ax.set_xlim([extent[0], extent[1]])
         ax.set_ylim([extent[2], extent[3]])
         plt.show()
+
+
+# from TMDEngine.dev import config
+
+fin = Fingerprint("wavs/song_wavs/Despacito_Luis_Fonsi_Dady_Yankee.wav", 1)
+print(len(fin.get_fingerprint()))
