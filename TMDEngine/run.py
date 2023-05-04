@@ -23,7 +23,16 @@ print("Useless sample fingerprints: ", round((not_matched_at_all / len(testing_)
 # this is useless because at least the one from the original song should have matched, that at least one entry in the
 # list no matches clearly signify that we need to up the quality of our fingerprints:
 # up the thresholds, min intensity
+all_pairs = []
+for f in matching_fingerprints_in_db.keys():
+    if matching_fingerprints_in_db[f]:
+        all_pairs += matching_fingerprints_in_db[f]
 
+print("\n\n all pairs : \n {} \n\n".format(all_pairs))
+
+song_id, dict_songs = recognize.find_final_song_id(all_pairs)
+
+print("\n\n*************\n{0}\n*************\n\n {1}".format(song_id, dict_songs))
 exit(0)
 # align the fingerprints received from the database and store them as (song_id, time_difference)
 aligned_matching_fingerprints = []
