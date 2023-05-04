@@ -43,15 +43,30 @@ def add_song_to_app(name: str, song_address: str):
         dup_perc = (num_fingerprints - num_duplicates) / num_fingerprints
         database_cnxn.change_fingerprinted_flag(song_id, True)
         print("Unique Fingerprints for {0}, id {1} inserted: {2}.\n Originally {3}% duplicates \n\n".
-              format(name, song_id, num_fingerprints,  dup_perc))
+              format(name, song_id, num_fingerprints, dup_perc))
     else:
         print("Song already present in database")
 
 
 def build_app():
+    # deleting pre-existing database
+    if config.are_you_sure:
+        pass
+    else:
+        raise ValueError("This action will delete the existing database. Please make necessary check before re "
+                         "running.")
+    db_conn = db.SQLConnection()
+    db_conn.delete_database(config.test_schema)
+    db_conn.create_database(config.test_schema)
+
+    new_con = db.SQLConnection()
+    new_con.create_tables()
+
     song_info_dict = get_files(config.files_folder)
 
-    for song_name in song_info_dict.keys():
-        print(song_name, song_info_dict[song_name])
+    for key in list(song_info_dict.keys())[:2]:
+        print(key, song_info_dict[key])
 
-        add_song_to_app(song_name, song_info_dict[song_name])
+        add_song_to_app(key, song_info_dict[key])
+
+

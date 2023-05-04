@@ -81,7 +81,6 @@ class SQLConnection:
         :return:
         """
         # (hash_val, (song_id, freq))
-        num_duplicate_hashes = 0
         try:
             add_fingerprint = "INSERT INTO fingerprint (hash, song_id, offset) VALUES (UNHEX('{0}'), {1}, {2})"
             self._cur.execute(add_fingerprint.format(fingerprint[0], fingerprint[1][0], fingerprint[1][1]))
@@ -121,19 +120,20 @@ class SQLConnection:
         fingerprints = []
         cursor = self._cnx.cursor()
 
-        # finding out how the hash is stored in sql and then recreating it here to query
-        find_hex_not_sql = '''select hex((unhex('{}')))'''.format(fprint_hash)
-        cursor.execute(find_hex_not_sql)
-        sub_20 = 0
-        for i in cursor:
-            sub_20 = i[0]
-        zeroes_to_add = 20 - len(sub_20)
-        final_hash_query = sub_20 + ("0" * zeroes_to_add)  # hash to query with
+        #  this isn't required if fprint hash is the same length as hash in db to lookup, which it is
+        # # finding out how the hash is stored in sql and then recreating it here to query
+        # find_hex_not_sql = '''select hex((unhex('{}')))'''.format(fprint_hash)
+        # cursor.execute(find_hex_not_sql)
+        # sub_20 = 0
+        # for i in cursor:
+        #     sub_20 = i[0]
+        # zeroes_to_add = 20 - len(sub_20)
+        # final_hash_query = sub_20 + ("0" * zeroes_to_add)  # hash to query with
 
         # querying the hash
         select_fprint = '''select hex(hash), song_id, offset from fingerprint where
                             hex(hash) = "{}"'''
-        cursor.execute(select_fprint.format(final_hash_query))
+        cursor.execute(select_fprint.format(fprint_hash))  # TODO: this loop can be optimized
         for result in cursor:
             fingerprints.append(result)
         cursor.close()
@@ -142,7 +142,7 @@ class SQLConnection:
 
     def find_song(self, song_id: int):
         song_info = []
-        select_song = '''SELECT song_id, name, fingerprinted FROM song WHERE song_id = {}'''
+        select_song = '''SELECT song_id, song_name, fingerprinted FROM song WHERE song_id = {}'''
 
         try:
             cursor = self._cnx.cursor()
@@ -164,3 +164,6 @@ class SQLConnection:
             f_val = 1
         self._cur.execute(change_f_val.format(f_val, song_id))
         self._cnx.commit()
+
+    def delete_database(self, db_name: str):
+        self._cur.execute('''DROP DATABASE {}'''.format(db_name))
