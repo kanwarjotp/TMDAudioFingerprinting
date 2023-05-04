@@ -175,13 +175,13 @@ class Fingerprint:
             plt.scatter(self._coordinates[:, 1], self._coordinates[:, 0])
             plt.xlabel('Spectrogram Width Units')
             plt.ylabel('Spectrogram Height Units')
-            plt.title("Peaks: " + self._song_id, fontsize=18)
+            plt.title("Peaks: " + str(self._song_id), fontsize=18)
         else:
             extent = 0, np.amax(self._spectrum['times']), self._spectrum['freq'][0], self._spectrum['freq'][-1]
             plt.imshow(self._spectrum['spectrum'], cmap='viridis', extent=extent)
             plt.xlabel('Time bin')
             plt.ylabel('Frequency [Hz]')
-            plt.title("Spectrum" + self._song_id)
+            plt.title("Spectrum" + str(self._song_id))
 
         plt.axis('auto')
         ax = plt.gca()
